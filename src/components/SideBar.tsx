@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { api } from "../services/api";
 import { Button } from "./Button";
 
 interface GenreResponseProps {
@@ -7,20 +8,23 @@ interface GenreResponseProps {
   title: string;
 }
 
-interface genreProps {
-  genres: GenreResponseProps[],
+interface GenreProps {
   selectedGenreId: number,
   setSelectedGenreId: (id: number) => void,
 }
 
-export function SideBar({ genres, selectedGenreId, setSelectedGenreId }: genreProps) {
-  //const [genres, setGenres] = useState<GenreResponseProps[]>([]);
-  //const [selectedGenreId, setSelectedGenreId] = useState(1);
-
+export function SideBar({ selectedGenreId, setSelectedGenreId }: GenreProps) {
+  const [genres, setGenres] = useState<GenreResponseProps[]>([]);
   
   function handleClickButton(id: number) {
     setSelectedGenreId(id);
   }
+
+  useEffect(() => {
+    api.get<GenreResponseProps[]>('genres').then(response => {
+      setGenres(response.data);
+    });
+  }, []);
 
   return (
     <nav className="sidebar">
